@@ -12,10 +12,19 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
+            /* Se ha eliminado overflow: hidden para permitir el scroll */
+            background-color: #f3f4f6; /* Un color de fondo simple para el body */
+            min-height: 100vh;
         }
+
         .fireworks-background {
-            position: relative;
-            overflow: hidden;
+            position: fixed; /* Fixed para que el fondo no se mueva con el scroll */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
         }
 
         .fireworks-background::before,
@@ -83,12 +92,15 @@
         }
     </style>
 </head>
-<body class="fireworks-background bg-gradient-to-br from-blue-100 to-purple-100 min-h-screen p-4 sm:p-8 flex flex-col items-center">
+<body class="bg-gradient-to-br from-blue-100 to-purple-100">
+
+    <!-- Fondo de fuegos artificiales, ahora fijo para que el contenido principal pueda desplazarse -->
+    <div class="fireworks-background bg-gradient-to-br from-blue-100 to-purple-100"></div>
 
     <!-- Elemento de audio oculto -->
     <audio id="background-audio" src="https://drive.google.com/uc?export=download&id=17U0T-1OX18CiNTOExihZs7aZs55OdmJZ" loop></audio>
 
-    <div class="relative z-10 max-w-4xl mx-auto bg-white rounded-3xl shadow-2xl p-6 sm:p-10 text-center flex-grow">
+    <div class="relative z-10 max-w-4xl mx-auto bg-white rounded-3xl shadow-2xl p-6 sm:p-10 text-center my-8">
         <h1 class="text-3xl sm:text-4xl font-bold text-gray-800 mb-2">¡Una Gran Noticia!</h1>
         <p class="text-base sm:text-lg text-gray-600 mb-6 sm:mb-8">
             Con mucha alegría, queremos compartir que nuestros amados hijos van a ser bautizados. Nos encantaría que formen parte de este camino, aceptando el honor de ser sus padrinos y madrinas.
