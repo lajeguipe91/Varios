@@ -1,469 +1,452 @@
-import React, { useState, useEffect, useRef } from 'react';
-
-const App = () => {
-    // Definimos un icono SVG para Carlos, ya que no se encontró una imagen en el archivo
-    const UserIcon = () => (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            className="w-full h-full text-gray-400 p-4"
-        >
-            <path
-                fillRule="evenodd"
-                d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z"
-                clipRule="evenodd"
-            />
-        </svg>
-    );
-
-    // Definimos la estructura de datos para los padrinos y ahijados con los nuevos enlaces de imágenes
-    const padrinosData = [
-        {
-            ahijado: {
-                nombre: 'Luis Daniel',
-                imagen: 'https://lh3.googleusercontent.com/d/1XaidQnCj6Sketzz04r8FjdwURcdhN-Ap',
-                descripcion: 'Bebé con buzo color beige',
-            },
-            padrinos: [
-                {
-                    nombre: 'Laura Luisa',
-                    imagen: 'https://lh3.googleusercontent.com/d/12Q4qDQg1Fljox5TV7PvdJHbrhjUQyDRC',
-                    descripcion: 'Mujer con blusa blanca y globos detrás',
-                },
-                {
-                    nombre: 'Carlos',
-                    imagen: 'https://lh3.googleusercontent.com/d/1jqXE2wTTEw6_QhgxRmQGyWtJgvY5nx1E',
-                    descripcion: 'Hombre en el mar',
-                },
-            ],
-        },
-        {
-            ahijado: {
-                nombre: 'Liam Alejandro',
-                imagen: 'https://lh3.googleusercontent.com/d/1zOgrXEuc2V28kCWjsZrNvfPKQSit0wLi',
-                descripcion: 'Bebé con buzo de dinosaurios',
-            },
-            padrinos: [
-                {
-                    nombre: 'Alejandro Antonio',
-                    imagen: 'https://lh3.googleusercontent.com/d/1NsezoKOaC0P_6tdeqffI4QSLcMKHQk7f',
-                    descripcion: 'Hombre en la playa con gafas de sol',
-                },
-                {
-                    nombre: 'Teresa',
-                    imagen: 'https://lh3.googleusercontent.com/d/1ksoBw5WxISH_lbGLoiwG0cdP1o3OD0oP',
-                    descripcion: 'Mujer sonriendo con una botella en la mano',
-                },
-            ],
-        },
-        {
-            ahijado: {
-                nombre: 'Monserrat',
-                imagen: 'https://lh3.googleusercontent.com/d/1Zpb8Tflgo3xGWJi7ktiO7hi7PcQfnznc',
-                descripcion: 'Bebé con buzo color lila',
-            },
-            padrinos: [
-                {
-                    nombre: 'Luchito',
-                    imagen: 'https://lh3.googleusercontent.com/d/1k0sykELjgK9_wTBq2ctLc6IrdHzRY2jv',
-                    descripcion: 'Hombre joven sosteniendo a un bebé',
-                },
-                {
-                    nombre: 'Karol',
-                    imagen: 'https://lh3.googleusercontent.com/d/1uvXg2rbT8EprhDtIOVpvYjjVjcnJXiLj',
-                    descripcion: 'Mujer con gafas de sol, sonriendo',
-                },
-            ],
-        },
-        {
-            ahijado: {
-                nombre: 'Thiago Andrés',
-                imagen: 'https://lh3.googleusercontent.com/d/11Rg2xre6e_EPnlGlL_lju1Jsl2d2mssk',
-                descripcion: 'Bebé mirando hacia un lado con buzo de colores',
-            },
-            padrinos: [
-                {
-                    nombre: 'Andrea',
-                    imagen: 'https://lh3.googleusercontent.com/d/1Y6VTmv0JhqcdJiB5RlYN6ZfFaWJ0WRbp',
-                    descripcion: 'Mujer de cabello largo y oscuro',
-                },
-                {
-                    nombre: 'Gabriel',
-                    imagen: 'https://lh3.googleusercontent.com/d/1KJlprMtl_uz1rtTRIvPRRO1HavgqhXdK',
-                    descripcion: 'Hombre en un bote',
-                },
-            ],
-        },
-    ];
-
-    // Estado para controlar qué sección está abierta
-    const [openCard, setOpenCard] = useState(null);
-    // Estado para el contador regresivo
-    const [countdown, setCountdown] = useState({});
-    // Nuevo estado para controlar la visibilidad del modal de guiño
-    const [showWinkModal, setShowWinkModal] = useState(false);
-    // Nuevo estado para mostrar un mensaje de error si el audio falla
-    const [audioError, setAudioError] = useState(null);
-
-    // URL del audio que se reproducirá. Es la canción "Mi Ahijado" de Diomedes Díaz.
-    // Enlace actualizado y corregido para que el audio funcione
-    const audioUrl = 'https://drive.google.com/uc?export=download&id=17U0T-1OX18CiNTOExihZs7aZs55OdmJZ';
-    const audioRef = useRef(null);
-
-    // Función para manejar el clic en la tarjeta
-    const handleCardClick = (nombre) => {
-        // Pausar el audio si se está reproduciendo
-        if (audioRef.current && !audioRef.current.paused) {
-            audioRef.current.pause();
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invitación a Padrinos</title>
+    <!-- Incluye el CDN de Tailwind CSS para el estilo -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .fireworks-background {
+            position: relative;
+            overflow: hidden;
         }
 
-        // Si la tarjeta que se hizo clic ya estaba abierta, la cerramos
-        if (openCard === nombre) {
-            setOpenCard(null);
-            setAudioError(null); // Limpiamos el error al cerrar la tarjeta
-        } else {
-            // Si es una nueva tarjeta, la abrimos y reproducimos el audio
-            setOpenCard(nombre);
-            if (audioRef.current) {
-                // Intentamos reproducir el audio y capturamos cualquier error
-                audioRef.current.play().then(() => {
-                    setAudioError(null); // Limpiamos el error si la reproducción tiene éxito
-                }).catch(error => {
-                    console.log("No se pudo iniciar la reproducción. El usuario puede necesitar interactuar con la página.", error);
-                    setAudioError('No se pudo reproducir el audio. Por favor, asegúrate de que el enlace de audio es público y de que el navegador lo permite.');
-                });
+        .fireworks-background::before,
+        .fireworks-background::after {
+            content: '';
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: transparent;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes firework {
+            0% {
+                transform: translate(0, 0) scale(0.1);
+                opacity: 0;
+                box-shadow: 0 0 0px 0px rgba(255, 255, 255, 0);
+            }
+            20% {
+                transform: translate(0, 0) scale(0.8);
+                opacity: 1;
+                box-shadow: 0 0 10px 5px rgba(255, 255, 255, 0.5);
+            }
+            100% {
+                transform: translate(var(--x), var(--y)) scale(1.5);
+                opacity: 0;
+                box-shadow: 0 0 50px 10px rgba(255, 255, 255, 0);
             }
         }
-    };
 
-    // Función para manejar el clic en el botón de guiño y mostrar/ocultar el modal
-    const toggleWinkModal = () => {
-        setShowWinkModal(!showWinkModal);
-    };
+        .fireworks-background::before {
+            top: 15%;
+            left: 20%;
+            --x: 5vw;
+            --y: 10vh;
+            animation: firework 5s linear infinite;
+            animation-delay: 1s;
+            box-shadow: 
+                20vw 10vh 0 0 #fff,
+                25vw 25vh 0 0 #eee,
+                -15vw 5vh 0 0 #eee,
+                -5vw 20vh 0 0 #fff,
+                10vw -10vh 0 0 #eee,
+                -20vw -20vh 0 0 #fff,
+                15vw -5vh 0 0 #eee;
+        }
 
-    // Efecto para el contador regresivo
-    useEffect(() => {
-        const calculateCountdown = () => {
-            const now = new Date();
-            const decemberFirst = new Date(now.getFullYear(), 11, 1);
-            if (now > decemberFirst) {
-                // Si diciembre ya llegó este año, cuenta hacia el próximo
-                decemberFirst.setFullYear(now.getFullYear() + 1);
-            }
-            const difference = decemberFirst - now;
+        .fireworks-background::after {
+            top: 80%;
+            left: 70%;
+            --x: -10vw;
+            --y: -15vh;
+            animation: firework 5s linear infinite;
+            animation-delay: 2.5s;
+            box-shadow: 
+                -15vw -10vh 0 0 #eee,
+                -20vw 15vh 0 0 #fff,
+                10vw -20vh 0 0 #eee,
+                5vw 15vh 0 0 #fff,
+                -25vw -5vh 0 0 #eee,
+                10vw 20vh 0 0 #fff,
+                -5vw -15vh 0 0 #eee;
+        }
+    </style>
+</head>
+<body class="fireworks-background bg-gradient-to-br from-blue-100 to-purple-100 min-h-screen p-4 sm:p-8 flex flex-col items-center">
 
-            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+    <!-- Elemento de audio oculto -->
+    <audio id="background-audio" src="https://drive.google.com/uc?export=download&id=17U0T-1OX18CiNTOExihZs7aZs55OdmJZ" loop></audio>
 
-            setCountdown({ days, hours, minutes, seconds });
-        };
+    <div class="relative z-10 max-w-4xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden p-6 sm:p-10 text-center">
+        <h1 class="text-3xl sm:text-4xl font-bold text-gray-800 mb-2">¡Una Gran Noticia!</h1>
+        <p class="text-base sm:text-lg text-gray-600 mb-6 sm:mb-8">
+            Con mucha alegría, queremos compartir que nuestros amados hijos van a ser bautizados. Nos encantaría que formen parte de este camino, aceptando el honor de ser sus padrinos y madrinas.
+        </p>
 
-        const interval = setInterval(calculateCountdown, 1000);
+        <!-- Mensaje para el audio -->
+        <p class="text-md sm:text-lg text-green-600 font-bold mb-4">
+            🎉 Haz clic en una tarjeta para escuchar el audio de la invitación.
+        </p>
+        <div id="audio-error-message" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative mb-4" role="alert">
+            <span class="block sm:inline"></span>
+        </div>
 
-        // Limpieza del intervalo
-        return () => clearInterval(interval);
-    }, []);
-
-    // Datos de tiempo de viaje (estimaciones desde varias ciudades a Chimichagua)
-    const [selectedLocation, setSelectedLocation] = useState('Barranquilla');
-
-    const travelTimesData = {
-        'Barranquilla': [
-            { method: 'Vehículo', time: '4 horas, 29 minutos' },
-            { method: 'Avión', time: 'No hay vuelos directos. Se estima un tiempo de 5h 39min con transbordos y transporte terrestre.' },
-            { method: 'A pie', time: '5 días, 8 horas' },
-        ],
-        'Valledupar': [
-            { method: 'Vehículo', time: '2 horas, 56 minutos' },
-            { method: 'Avión', time: 'No hay vuelos directos. Se recomienda transporte terrestre.' },
-            { method: 'A pie', time: '2 días, 4 horas' },
-        ],
-        'Sydney': [
-            { method: 'Vehículo', time: 'No es posible' },
-            { method: 'Avión', time: '28 horas, 30 minutos (aproximadamente, con transbordos)' },
-            { method: 'A pie', time: 'No es posible' },
-        ],
-        'Santa Marta': [
-            { method: 'Vehículo', time: '3 horas, 50 minutos' },
-            { method: 'Avión', time: 'No hay vuelos directos. Se estima un tiempo de 4h 21min con transbordos y transporte terrestre.' },
-            { method: 'A pie', time: '3 días, 2 horas' },
-        ],
-        'Pitalito': [
-            { method: 'Vehículo', time: '15 horas' },
-            { method: 'Avión', time: '6 horas, 30 minutos (aproximadamente, con transbordos)' },
-            { method: 'A pie', time: '10 días, 12 horas' },
-        ],
-        'San Martin Cesar': [
-            { method: 'Vehículo', time: '1 hora, 15 minutos' },
-            { method: 'Avión', time: 'No hay vuelos directos. Se recomienda transporte terrestre.' },
-            { method: 'A pie', time: '9 horas, 30 minutos' },
-        ],
-        'Bucaramanga': [
-            { method: 'Vehículo', time: '4 horas, 57 minutos' },
-            { method: 'Avión', time: '7 horas, 7 minutos (aproximadamente, con transbordos)' },
-            { method: 'A pie', time: '3 días, 18 horas' },
-        ],
-    };
-
-    return (
-        <div className="fireworks-background bg-gradient-to-br from-blue-100 to-purple-100 min-h-screen font-inter p-4 sm:p-8 flex flex-col items-center">
-            {/* CSS para la animación de fuegos artificiales */}
-            <style>
-                {`
-                .fireworks-background {
-                    position: relative;
-                    overflow: hidden;
-                }
-
-                .fireworks-background::before,
-                .fireworks-background::after {
-                    content: '';
-                    position: absolute;
-                    width: 5px;
-                    height: 5px;
-                    background: transparent;
-                    border-radius: 50%;
-                    pointer-events: none;
-                    z-index: 1;
-                }
-
-                @keyframes firework {
-                    0% {
-                        transform: translate(0, 0) scale(0.1);
-                        opacity: 0;
-                        box-shadow: 0 0 0px 0px rgba(255, 255, 255, 0);
-                    }
-                    20% {
-                        transform: translate(0, 0) scale(0.8);
-                        opacity: 1;
-                        box-shadow: 0 0 10px 5px rgba(255, 255, 255, 0.5);
-                    }
-                    100% {
-                        transform: translate(var(--x), var(--y)) scale(1.5);
-                        opacity: 0;
-                        box-shadow: 0 0 50px 10px rgba(255, 255, 255, 0);
-                    }
-                }
-
-                .fireworks-background::before {
-                    top: 15%;
-                    left: 20%;
-                    --x: 5vw;
-                    --y: 10vh;
-                    animation: firework 5s linear infinite;
-                    animation-delay: 1s;
-                    box-shadow: 
-                        20vw 10vh 0 0 #fff,
-                        25vw 25vh 0 0 #eee,
-                        -15vw 5vh 0 0 #eee,
-                        -5vw 20vh 0 0 #fff,
-                        10vw -10vh 0 0 #eee,
-                        -20vw -20vh 0 0 #fff,
-                        15vw -5vh 0 0 #eee;
-                }
-
-                .fireworks-background::after {
-                    top: 80%;
-                    left: 70%;
-                    --x: -10vw;
-                    --y: -15vh;
-                    animation: firework 5s linear infinite;
-                    animation-delay: 2.5s;
-                    box-shadow: 
-                        -15vw -10vh 0 0 #eee,
-                        -20vw 15vh 0 0 #fff,
-                        10vw -20vh 0 0 #eee,
-                        5vw 15vh 0 0 #fff,
-                        -25vw -5vh 0 0 #eee,
-                        10vw 20vh 0 0 #fff,
-                        -5vw -15vh 0 0 #eee;
-                }
-                `}
-            </style>
-            
-            {/* Elemento de audio oculto para ser controlado por React */}
-            <audio ref={audioRef} src={audioUrl} loop></audio>
-
-            <div className="relative z-10 max-w-4xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden p-6 sm:p-10 text-center">
-                <h1 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-2">¡Una Gran Noticia!</h1>
-                <p className="text-base sm:text-lg text-gray-600 mb-6 sm:mb-8">
-                    Con mucha alegría, queremos compartir que nuestros amados hijos van a ser bautizados. Nos encantaría que formen parte de este camino, aceptando el honor de ser sus padrinos y madrinas.
-                </p>
-
-                {/* Mensaje para el audio */}
-                <p className="text-md sm:text-lg text-green-600 font-bold mb-4">
-                    🎉 Haz clic en una tarjeta para escuchar el audio de la invitación.
-                </p>
-                {/* Mensaje de error si el audio falla */}
-                {audioError && (
-                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative mb-4" role="alert">
-                        <span className="block sm:inline">{audioError}</span>
-                    </div>
-                )}
-
-                <div className="bg-gray-50 rounded-2xl p-4 sm:p-6 mb-8 shadow-inner">
-                    <h2 className="text-2xl sm:text-3xl font-extrabold text-blue-600 mb-4">
-                        Pretendemos Bautizar a los Cuatrillos en Diciembre 🎇
-                    </h2>
-                    <p className="text-sm sm:text-md text-gray-700 font-semibold">
-                        El bautizo se celebrará en **Chimichagua, Cesar**.
-                    </p>
-                    {/* Selector de ubicación */}
-                    <div className="mt-4 flex flex-col sm:flex-row justify-center items-center">
-                        <p className="text-sm font-bold text-gray-700 mb-2 sm:mb-0 sm:mr-4">Selecciona tu ubicación:</p>
-                        <select 
-                            className="p-2 border border-gray-300 rounded-lg text-gray-800 font-semibold"
-                            value={selectedLocation}
-                            onChange={(e) => setSelectedLocation(e.target.value)}
-                        >
-                            {Object.keys(travelTimesData).map((location, index) => (
-                                <option key={index} value={location}>{location}</option>
-                            ))}
-                        </select>
-                    </div>
-
-                    {/* Mostrar tiempos de viaje dinámicamente */}
-                    <div className="mt-4 text-xs sm:text-sm text-gray-600">
-                        <p className="font-bold">Tiempo estimado de llegada desde {selectedLocation}:</p>
-                        <ul className="list-disc list-inside mt-1 mx-auto text-left w-fit">
-                            {travelTimesData[selectedLocation].map((item, index) => (
-                                <li key={index}>{item.method}: {item.time}</li>
-                            ))}
-                        </ul>
-                    </div>
-                    <p className="mt-6 text-lg font-bold text-purple-700 animate-pulse">
-                        ¡Se siente que viene diciembre!
-                    </p>
-                    <p className="mt-2 text-sm text-gray-500 font-semibold">
-                        Faltan para el 1 de Diciembre:
-                    </p>
-                    <div className="mt-2 flex justify-center space-x-2 sm:space-x-4 text-white font-bold text-lg sm:text-xl">
-                        <div className="bg-blue-500 rounded-lg p-2 sm:p-3 shadow-md">
-                            <span>{countdown.days}</span>
-                            <span className="block text-xs sm:text-sm">días</span>
-                        </div>
-                        <div className="bg-purple-500 rounded-lg p-2 sm:p-3 shadow-md">
-                            <span>{countdown.hours}</span>
-                            <span className="block text-xs sm:text-sm">horas</span>
-                        </div>
-                        <div className="bg-pink-500 rounded-lg p-2 sm:p-3 shadow-md">
-                            <span>{countdown.minutes}</span>
-                            <span className="block text-xs sm:text-sm">minutos</span>
-                        </div>
-                        <div className="bg-red-500 rounded-lg p-2 sm:p-3 shadow-md">
-                            <span>{countdown.seconds}</span>
-                            <span className="block text-xs sm:text-sm">segundos</span>
-                        </div>
-                    </div>
-                </div>
-
-                <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-6">El Árbol de Padrinos</h2>
-
-                <div className="space-y-4 sm:space-y-6">
-                    {padrinosData.map((data, index) => {
-                        const isOpen = openCard === data.ahijado.nombre;
-                        return (
-                            <div 
-                                key={index} 
-                                className={`relative rounded-2xl shadow-lg p-4 sm:p-6 cursor-pointer transform transition-all duration-300 ease-in-out 
-                                ${isOpen ? 'bg-gray-100 scale-105' : 'bg-white hover:scale-105'}`}
-                                onClick={() => handleCardClick(data.ahijado.nombre)}
-                            >
-                                <div className="flex flex-col items-center mb-4">
-                                    <h3 className="text-xl sm:text-2xl font-bold text-blue-600 mb-2">{data.ahijado.nombre}</h3>
-                                    <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-blue-300 shadow-md">
-                                        <img 
-                                            src={data.ahijado.imagen} 
-                                            alt={`Imagen de ${data.ahijado.nombre}`} 
-                                            className="w-full h-full object-cover"
-                                            onError={(e) => { e.target.src = `https://placehold.co/150x150/d3d3d3/000?text=Error%20al%20cargar%20imagen`; }}
-                                        />
-                                        <div className="absolute inset-0 bg-blue-500 opacity-20"></div>
-                                    </div>
-                                </div>
-                                {isOpen && (
-                                    <>
-                                    <div className="flex flex-wrap justify-center items-center space-x-4 sm:space-x-8 mt-4">
-                                        {data.padrinos.map((padrino, i) => (
-                                            <div key={i} className="flex flex-col items-center text-center my-2">
-                                                <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-4 border-purple-300 shadow-md flex items-center justify-center bg-gray-100">
-                                                    {padrino.imagen ? (
-                                                        <img 
-                                                            src={padrino.imagen} 
-                                                            alt={`Imagen de ${padrino.nombre}`} 
-                                                            className="w-full h-full object-cover"
-                                                            onError={(e) => { e.target.src = `https://placehold.co/150x150/d3d3d3/000?text=Error%20al%20cargar%20imagen`; }}
-                                                        />
-                                                    ) : (
-                                                        <UserIcon />
-                                                    )}
-                                                </div>
-                                                <p className="mt-2 text-sm sm:text-base font-semibold text-gray-700">{padrino.nombre}</p>
-                                            </div>
-                                        ))}
-                                    </div>
-                                    {/* Pequeño icono de audio que se muestra cuando la tarjeta está abierta */}
-                                    <div className="absolute top-2 right-4 text-gray-600">
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M10 5l4 4-4 4V5z" />
-                                        </svg>
-                                    </div>
-                                    </>
-                                )}
-                            </div>
-                        );
-                    })}
-                </div>
-
-                <div className="mt-8 sm:mt-12 text-gray-700 bg-gray-50 rounded-2xl p-4 sm:p-6 shadow-inner">
-                    <h3 className="text-xl sm:text-2xl font-bold mb-2 text-purple-600">¿Qué significa ser padrino o madrina?</h3>
-                    <p className="text-sm sm:text-base">
-                        Ser padrino o madrina es un rol sagrado y lleno de amor. Es una promesa de guiar espiritualmente a nuestros hijos, llevándolos de la mano del Señor, Dios Todopoderoso. Este camino está basado en el amor, la tolerancia y la aceptación, y es ser un apoyo incondicional en su crecimiento.
-                    </p>
-                </div>
-                
-                <p className="mt-6 sm:mt-8 text-md sm:text-lg text-gray-600 font-semibold">
-                    Esperamos con ansias su respuesta para celebrar este hermoso momento juntos.
-                </p>
-                <p className="mt-2 text-base text-gray-500">Con mucho cariño, La familia.</p>
-
-                {/* Botón de guiño para el modal */}
-                <button
-                    onClick={toggleWinkModal}
-                    className="mt-6 text-4xl cursor-pointer hover:scale-110 transition-transform duration-200"
-                    aria-label="Mostrar mensaje especial"
-                >
-                    😉
-                </button>
+        <div class="bg-gray-50 rounded-2xl p-4 sm:p-6 mb-8 shadow-inner">
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-blue-600 mb-4">
+                Pretendemos Bautizar a los Cuatrillos en Diciembre 🎇
+            </h2>
+            <p class="text-sm sm:text-md text-gray-700 font-semibold">
+                El bautizo se celebrará en **Chimichagua, Cesar**.
+            </p>
+            <!-- Selector de ubicación -->
+            <div class="mt-4 flex flex-col sm:flex-row justify-center items-center">
+                <p class="text-sm font-bold text-gray-700 mb-2 sm:mb-0 sm:mr-4">Selecciona tu ubicación:</p>
+                <select id="location-selector" class="p-2 border border-gray-300 rounded-lg text-gray-800 font-semibold">
+                    <!-- Opciones se generarán con JS -->
+                </select>
             </div>
 
-            {/* Modal de guiño */}
-            {showWinkModal && (
-                <div 
-                    className="fixed inset-0 bg-black bg-opacity-20 flex items-center justify-center z-50"
-                    onClick={toggleWinkModal} // Cierra el modal al hacer clic en el fondo oscuro
-                >
-                    <div 
-                        className="relative z-50 w-[75%] p-8 rounded-2xl text-center bg-white shadow-2xl"
-                        onClick={(e) => e.stopPropagation()} // Evita que el clic en el modal lo cierre
-                    >
-                        <p className="text-xl sm:text-2xl font-bold text-gray-800">
-                            Que esperas cachon acepta, nojoooda. Cule falla dudarlo
-                        </p>
-                        <button 
-                            onClick={toggleWinkModal} 
-                            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-                        >
-                            Cerrar
-                        </button>
-                    </div>
-                </div>
-            )}
+            <!-- Mostrar tiempos de viaje dinámicamente -->
+            <div class="mt-4 text-xs sm:text-sm text-gray-600">
+                <p class="font-bold">Tiempo estimado de llegada desde <span id="selected-location-text">Barranquilla</span>:</p>
+                <ul id="travel-times-list" class="list-disc list-inside mt-1 mx-auto text-left w-fit">
+                    <!-- Tiempos se generarán con JS -->
+                </ul>
+            </div>
+            <p class="mt-6 text-lg font-bold text-purple-700 animate-pulse">
+                ¡Se siente que viene diciembre!
+            </p>
+            <p class="mt-2 text-sm text-gray-500 font-semibold">
+                Faltan para el 1 de Diciembre:
+            </p>
+            <div id="countdown" class="mt-2 flex justify-center space-x-2 sm:space-x-4 text-white font-bold text-lg sm:text-xl">
+                <!-- Contador se actualizará con JS -->
+            </div>
         </div>
-    );
-};
 
-export default App;
+        <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-6">El Árbol de Padrinos</h2>
+
+        <div id="padrinos-container" class="space-y-4 sm:space-y-6">
+            <!-- Las tarjetas se generarán con JS -->
+        </div>
+
+        <div class="mt-8 sm:mt-12 text-gray-700 bg-gray-50 rounded-2xl p-4 sm:p-6 shadow-inner">
+            <h3 class="text-xl sm:text-2xl font-bold mb-2 text-purple-600">¿Qué significa ser padrino o madrina?</h3>
+            <p class="text-sm sm:text-base">
+                Ser padrino o madrina es un rol sagrado y lleno de amor. Es una promesa de guiar espiritualmente a nuestros hijos, llevándolos de la mano del Señor, Dios Todopoderoso. Este camino está basado en el amor, la tolerancia y la aceptación, y es ser un apoyo incondicional en su crecimiento.
+            </p>
+        </div>
+        
+        <p class="mt-6 sm:mt-8 text-md sm:text-lg text-gray-600 font-semibold">
+            Esperamos con ansias su respuesta para celebrar este hermoso momento juntos.
+        </p>
+        <p class="mt-2 text-base text-gray-500">Con mucho cariño, La familia.</p>
+
+        <!-- Botón de guiño para el modal -->
+        <button id="wink-button" class="mt-6 text-4xl cursor-pointer hover:scale-110 transition-transform duration-200" aria-label="Mostrar mensaje especial">
+            😉
+        </button>
+    </div>
+
+    <!-- Modal de guiño -->
+    <div id="wink-modal" class="hidden fixed inset-0 bg-black bg-opacity-20 flex items-center justify-center z-50">
+        <div class="relative z-50 w-[75%] p-8 rounded-2xl text-center bg-white shadow-2xl">
+            <p class="text-xl sm:text-2xl font-bold text-gray-800">
+                Que esperas cachon acepta, nojoooda. Cule falla dudarlo
+            </p>
+            <button id="close-modal-button" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+                Cerrar
+            </button>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const padrinosData = [
+                {
+                    ahijado: {
+                        nombre: 'Luis Daniel',
+                        imagen: 'https://lh3.googleusercontent.com/d/1XaidQnCj6Sketzz04r8FjdwURcdhN-Ap',
+                    },
+                    padrinos: [
+                        {
+                            nombre: 'Laura Luisa',
+                            imagen: 'https://lh3.googleusercontent.com/d/12Q4qDQg1Fljox5TV7PvdJHbrhjUQyDRC',
+                        },
+                        {
+                            nombre: 'Carlos',
+                            imagen: 'https://lh3.googleusercontent.com/d/1jqXE2wTTEw6_QhgxRmQGyWtJgvY5nx1E',
+                        },
+                    ],
+                },
+                {
+                    ahijado: {
+                        nombre: 'Liam Alejandro',
+                        imagen: 'https://lh3.googleusercontent.com/d/1zOgrXEuc2V28kCWjsZrNvfPKQSit0wLi',
+                    },
+                    padrinos: [
+                        {
+                            nombre: 'Alejandro Antonio',
+                            imagen: 'https://lh3.googleusercontent.com/d/1NsezoKOaC0P_6tdeqffI4QSLcMKHQk7f',
+                        },
+                        {
+                            nombre: 'Teresa',
+                            imagen: 'https://lh3.googleusercontent.com/d/1ksoBw5WxISH_lbGLoiwG0cdP1o3OD0oP',
+                        },
+                    ],
+                },
+                {
+                    ahijado: {
+                        nombre: 'Monserrat',
+                        imagen: 'https://lh3.googleusercontent.com/d/1Zpb8Tflgo3xGWJi7ktiO7hi7PcQfnznc',
+                    },
+                    padrinos: [
+                        {
+                            nombre: 'Luchito',
+                            imagen: 'https://lh3.googleusercontent.com/d/1k0sykELjgK9_wTBq2ctLc6IrdHzRY2jv',
+                        },
+                        {
+                            nombre: 'Karol',
+                            imagen: 'https://lh3.googleusercontent.com/d/1uvXg2rbT8EprhDtIOVpvYjjVjcnJXiLj',
+                        },
+                    ],
+                },
+                {
+                    ahijado: {
+                        nombre: 'Thiago Andrés',
+                        imagen: 'https://lh3.googleusercontent.com/d/11Rg2xre6e_EPnlGlL_lju1Jsl2d2mssk',
+                    },
+                    padrinos: [
+                        {
+                            nombre: 'Andrea',
+                            imagen: 'https://lh3.googleusercontent.com/d/1Y6VTmv0JhqcdJiB5RlYN6ZfFaWJ0WRbp',
+                        },
+                        {
+                            nombre: 'Gabriel',
+                            imagen: 'https://lh3.googleusercontent.com/d/1KJlprMtl_uz1rtTRIvPRRO1HavgqhXdK',
+                        },
+                    ],
+                },
+            ];
+
+            const travelTimesData = {
+                'Barranquilla': [
+                    { method: 'Vehículo', time: '4 horas, 29 minutos' },
+                    { method: 'Avión', time: 'No hay vuelos directos. Se estima un tiempo de 5h 39min con transbordos y transporte terrestre.' },
+                    { method: 'A pie', time: '5 días, 8 horas' },
+                ],
+                'Valledupar': [
+                    { method: 'Vehículo', time: '2 horas, 56 minutos' },
+                    { method: 'Avión', time: 'No hay vuelos directos. Se recomienda transporte terrestre.' },
+                    { method: 'A pie', time: '2 días, 4 horas' },
+                ],
+                'Sydney': [
+                    { method: 'Vehículo', time: 'No es posible' },
+                    { method: 'Avión', time: '28 horas, 30 minutos (aproximadamente, con transbordos)' },
+                    { method: 'A pie', time: 'No es posible' },
+                ],
+                'Santa Marta': [
+                    { method: 'Vehículo', time: '3 horas, 50 minutos' },
+                    { method: 'Avión', time: 'No hay vuelos directos. Se estima un tiempo de 4h 21min con transbordos y transporte terrestre.' },
+                    { method: 'A pie', time: '3 días, 2 horas' },
+                ],
+                'Pitalito': [
+                    { method: 'Vehículo', time: '15 horas' },
+                    { method: 'Avión', time: '6 horas, 30 minutos (aproximadamente, con transbordos)' },
+                    { method: 'A pie', time: '10 días, 12 horas' },
+                ],
+                'San Martin Cesar': [
+                    { method: 'Vehículo', time: '1 hora, 15 minutos' },
+                    { method: 'Avión', time: 'No hay vuelos directos. Se recomienda transporte terrestre.' },
+                    { method: 'A pie', time: '9 horas, 30 minutos' },
+                ],
+                'Bucaramanga': [
+                    { method: 'Vehículo', time: '4 horas, 57 minutos' },
+                    { method: 'Avión', time: '7 horas, 7 minutos (aproximadamente, con transbordos)' },
+                    { method: 'A pie', time: '3 días, 18 horas' },
+                ],
+            };
+
+            const audio = document.getElementById('background-audio');
+            const padrinosContainer = document.getElementById('padrinos-container');
+            const locationSelector = document.getElementById('location-selector');
+            const selectedLocationText = document.getElementById('selected-location-text');
+            const travelTimesList = document.getElementById('travel-times-list');
+            const countdownEl = document.getElementById('countdown');
+            const winkButton = document.getElementById('wink-button');
+            const winkModal = document.getElementById('wink-modal');
+            const closeModalButton = document.getElementById('close-modal-button');
+            const audioErrorMessage = document.getElementById('audio-error-message');
+            
+            let openCard = null;
+
+            // Función para renderizar las tarjetas
+            function renderPadrinosCards() {
+                padrinosContainer.innerHTML = '';
+                padrinosData.forEach((data, index) => {
+                    const card = document.createElement('div');
+                    card.className = `relative rounded-2xl shadow-lg p-4 sm:p-6 cursor-pointer transform transition-all duration-300 ease-in-out bg-white hover:scale-105`;
+                    card.dataset.nombre = data.ahijado.nombre;
+
+                    const ahijadoContent = `
+                        <div class="flex flex-col items-center mb-4">
+                            <h3 class="text-xl sm:text-2xl font-bold text-blue-600 mb-2">${data.ahijado.nombre}</h3>
+                            <div class="relative w-32 h-32 rounded-full overflow-hidden border-4 border-blue-300 shadow-md">
+                                <img src="${data.ahijado.imagen}" alt="Imagen de ${data.ahijado.nombre}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://placehold.co/150x150/d3d3d3/000?text=Error%20al%20cargar%20imagen';"/>
+                                <div class="absolute inset-0 bg-blue-500 opacity-20"></div>
+                            </div>
+                        </div>
+                    `;
+
+                    let padrinosContent = '';
+                    if (openCard === data.ahijado.nombre) {
+                        const padrinos = data.padrinos.map(padrino => {
+                            // Icono SVG por defecto si no hay imagen
+                            const padrinoImage = padrino.imagen ? 
+                                `<img src="${padrino.imagen}" alt="Imagen de ${padrino.nombre}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://placehold.co/150x150/d3d3d3/000?text=Error%20al%20cargar%20imagen';"/>` :
+                                `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-full h-full text-gray-400 p-4">
+                                    <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z" clip-rule="evenodd"/>
+                                </svg>`;
+                            return `
+                                <div class="flex flex-col items-center text-center my-2">
+                                    <div class="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-4 border-purple-300 shadow-md flex items-center justify-center bg-gray-100">
+                                        ${padrinoImage}
+                                    </div>
+                                    <p class="mt-2 text-sm sm:text-base font-semibold text-gray-700">${padrino.nombre}</p>
+                                </div>
+                            `;
+                        }).join('');
+                        padrinosContent = `
+                            <div class="flex flex-wrap justify-center items-center space-x-4 sm:space-x-8 mt-4">
+                                ${padrinos}
+                            </div>
+                            <div class="absolute top-2 right-4 text-gray-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M10 5l4 4-4 4V5z" />
+                                </svg>
+                            </div>
+                        `;
+                        card.classList.add('bg-gray-100', 'scale-105');
+                        card.classList.remove('bg-white', 'hover:scale-105');
+                    }
+                    card.innerHTML = ahijadoContent + padrinosContent;
+                    padrinosContainer.appendChild(card);
+                });
+            }
+
+            // Manejador de eventos para las tarjetas
+            padrinosContainer.addEventListener('click', (event) => {
+                const card = event.target.closest('div[data-nombre]');
+                if (!card) return;
+
+                const nombre = card.dataset.nombre;
+                
+                // Pausar el audio si se está reproduciendo
+                if (!audio.paused) {
+                    audio.pause();
+                }
+
+                if (openCard === nombre) {
+                    openCard = null;
+                    audioErrorMessage.classList.add('hidden');
+                } else {
+                    openCard = nombre;
+                    audio.play().then(() => {
+                        audioErrorMessage.classList.add('hidden');
+                    }).catch(error => {
+                        console.error("Error al reproducir el audio:", error);
+                        audioErrorMessage.classList.remove('hidden');
+                        audioErrorMessage.querySelector('span').textContent = 'No se pudo reproducir el audio. Por favor, asegúrate de que el enlace de audio es público y de que el navegador lo permite.';
+                    });
+                }
+                renderPadrinosCards();
+            });
+
+            // Función para el contador regresivo
+            function calculateCountdown() {
+                const now = new Date();
+                const decemberFirst = new Date(now.getFullYear(), 11, 1);
+                if (now > decemberFirst) {
+                    decemberFirst.setFullYear(now.getFullYear() + 1);
+                }
+                const difference = decemberFirst - now;
+
+                const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+                countdownEl.innerHTML = `
+                    <div class="bg-blue-500 rounded-lg p-2 sm:p-3 shadow-md">
+                        <span>${days}</span>
+                        <span class="block text-xs sm:text-sm">días</span>
+                    </div>
+                    <div class="bg-purple-500 rounded-lg p-2 sm:p-3 shadow-md">
+                        <span>${hours}</span>
+                        <span class="block text-xs sm:text-sm">horas</span>
+                    </div>
+                    <div class="bg-pink-500 rounded-lg p-2 sm:p-3 shadow-md">
+                        <span>${minutes}</span>
+                        <span class="block text-xs sm:text-sm">minutos</span>
+                    </div>
+                    <div class="bg-red-500 rounded-lg p-2 sm:p-3 shadow-md">
+                        <span>${seconds}</span>
+                        <span class="block text-xs sm:text-sm">segundos</span>
+                    </div>
+                `;
+            }
+            setInterval(calculateCountdown, 1000);
+
+            // Función para actualizar los tiempos de viaje
+            function updateTravelTimes() {
+                const selectedLocation = locationSelector.value;
+                selectedLocationText.textContent = selectedLocation;
+                travelTimesList.innerHTML = '';
+                travelTimesData[selectedLocation].forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = `${item.method}: ${item.time}`;
+                    travelTimesList.appendChild(li);
+                });
+            }
+
+            // Manejador de eventos para el selector de ubicación
+            locationSelector.addEventListener('change', updateTravelTimes);
+
+            // Llenar el selector de ubicación con las opciones
+            Object.keys(travelTimesData).forEach(location => {
+                const option = document.createElement('option');
+                option.value = location;
+                option.textContent = location;
+                locationSelector.appendChild(option);
+            });
+            
+            // Eventos del modal de guiño
+            winkButton.addEventListener('click', () => {
+                winkModal.classList.remove('hidden');
+            });
+
+            winkModal.addEventListener('click', (event) => {
+                if (event.target.id === 'wink-modal' || event.target.id === 'close-modal-button') {
+                    winkModal.classList.add('hidden');
+                }
+            });
+
+            // Renderizado inicial
+            renderPadrinosCards();
+            updateTravelTimes();
+        });
+    </script>
+
+</body>
+</html>
